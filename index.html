@@ -1,0 +1,173 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Bridge</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg,#ffdaec,#cce8ff,#e8d5ff);
+}
+
+.container {
+  max-width: 450px;
+  margin: 40px auto;
+  padding: 25px;
+  background: white;
+  border-radius: 25px;
+  text-align: center;
+  box-shadow: 0 8px 25px #7774;
+}
+
+h1 {
+  color: #7138c9;
+  font-size: 32px;
+}
+
+.subtitle {
+  color: #777;
+}
+
+input {
+  width: 100%;
+  padding: 15px;
+  font-size: 17px;
+  border: 2px solid #d8c5ff;
+  border-radius: 12px;
+  margin: 15px 0;
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(90deg,#8b45df,#ed55a2);
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#status {
+  color: #777;
+}
+
+.result {
+  display: none;
+  margin-top: 20px;
+  padding: 20px;
+  background: #f5edff;
+  border-radius: 15px;
+}
+
+#meaning {
+  color: #7138c9;
+  font-size: 32px;
+  overflow-wrap: anywhere;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🌈 Word Bridge</h1>
+
+<p class="subtitle">
+English to Hindi Dictionary
+</p>
+
+<input
+id="word"
+type="text"
+placeholder="Enter an English word..."
+>
+
+<button onclick="translateWord()">
+🔍 Translate
+</button>
+
+<p id="status"></p>
+
+<div class="result" id="result">
+<p>Hindi Meaning</p>
+<h2 id="meaning"></h2>
+</div>
+
+</div>
+
+<script>
+
+async function translateWord() {
+
+const word = document.getElementById("word").value.trim();
+const status = document.getElementById("status");
+const result = document.getElementById("result");
+const meaning = document.getElementById("meaning");
+
+if (!word) {
+status.innerText = "Please enter a word!";
+result.style.display = "none";
+return;
+}
+
+status.innerText = "Translating... 🌈";
+result.style.display = "none";
+
+try {
+
+const url =
+"https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=hi&dt=t&q="
++ encodeURIComponent(word);
+
+const response = await fetch(url);
+
+if (!response.ok) {
+throw new Error("Network error");
+}
+
+const data = await response.json();
+
+const hindi = data[0]
+.map(item => item[0])
+.join("");
+
+if (!hindi) {
+throw new Error("No translation found");
+}
+
+meaning.innerText = hindi;
+result.style.display = "block";
+status.innerText = "Translation complete! 🎉";
+
+} catch (error) {
+
+status.innerText =
+"Translation failed. Please try again.";
+
+}
+
+}
+
+document.getElementById("word").addEventListener("keydown", function(event) {
+if (event.key === "Enter") {
+translateWord();
+}
+});
+
+</script>
+
+</body>
+</html>
